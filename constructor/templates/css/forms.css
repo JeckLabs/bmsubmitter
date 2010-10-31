@@ -1,0 +1,38 @@
+form fieldset {
+	float: left;
+	margin-left: 20px;
+	margin-top: 10px;
+}
+.form-row {
+	margin-top: 10px;
+}
+.row-left, .row-center, .row-right {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px;
+}
+.row-left {
+	width: 150px;
+}
+.row-center {
+	width: 300px;
+	margin: 0;
+}
+.row-right {
+	width: 150px;
+}
+.field-title {
+	width: 148px;
+	display: inline-block;
+}
+.field-value {
+	width: 148px;
+	display: inline-block;
+}
+
+.full-width {
+	width: 100%;
+}
+.red {
+	color: red;
+}

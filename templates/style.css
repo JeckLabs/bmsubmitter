@@ -1,0 +1,100 @@
+html {background: whitesmoke; font:medium/1.4em Verdana, serif;}
+
+a {color:dodgerblue;}
+a:hover {color:mediumblue;}
+#loadLastButton {text-decoration:none;}
+#loading {display: none;}
+a.current {text-decoration:none; color:black; cursor:default;}
+
+a.close {text-decoration:none; color:red;}
+
+a img {border:none;}
+#jeka {background:url('logo.png') left no-repeat; padding-left:23px;}
+.clear, .both {display:block; clear:both;}
+.hidden {display: none;}
+.restart {color: blue;text-decoration: underline;cursor: pointer;}
+.grey {color: #666;}
+.red {color: red}
+#feed, #results {margin-top: 50px;}
+
+ul {padding:0;}
+
+#header {font-size:large; margin-bottom:1.8em;}
+#logo {padding:.1em .3em; font-size:x-large;}
+ul li {display:inline; list-style:none; margin-right:.6em; white-space:nowrap;}
+
+fieldset, #aside, #posting {width:46%; float:left; position:relative; border:none;}
+fieldset {min-width:28em;}
+#aside {line-height:1.8em; border-left:1px dotted gray; padding-left:3%;}
+
+#aside p {font-size:x-large;}
+
+label.lat {font-size:small; color:gray;}
+.lat input, .lat textarea {display:block; padding:.3em; margin-bottom:.4em; border:1px solid gainsboro; background:white; width:90%; color:black;}
+
+
+#threads {width:2em;}
+label {padding-right:1em;}
+button {padding:.3em .6em; font-size:x-large; float:right; margin:.3em 10% 0 0;}
+
+div.formRow {
+	width: auto;
+	margin: 0;
+	margin-bottom:.4em; 
+}
+div.formRow label{
+	float: none;
+	font-size:small; 
+	color:gray;
+	margin: 0;
+	padding: 0;
+	padding-left:.3em;
+}
+div.formRow input, div.formRow textarea{
+	display:block; 
+	padding:.3em; 
+	border:1px solid gainsboro;
+	background:white; 
+	width:90%; 
+	color:black;
+}
+div.formRow input.nobr {
+	display: inline !important;
+	width: auto !important;
+}
+label.error {
+	color: tomato !important;
+}
+
+div {margin-top:1em;}
+div label {float:left; margin-right:1em; width:40%; min-width:8em;}
+.nobr, #aside label {white-space:nowrap;}
+select {min-width:12em;}
+
+
+#setting #header {margin-bottom:4em;}
+#setting fieldset {width:56%;}
+#setting #aside {width:32%;}
+
+.disabled {color:black; opacity:.3;}
+
+.deployed {position:relative;}
+.deployed ul {position:absolute; top:2em; left:1em;}
+
+
+#setting label {display:block; margin-bottom:.6em;width: 100%;}
+#setting label.module {display:block; margin-bottom:.6em;width: 40%;}
+#setting label a {padding:0 1em;}
+#modulesSelect a img {padding-right:.4em;}
+
+#history dd a {text-decoration:none; padding-right:.3em; opacity:.3;}
+#history dd a:hover {opacity:1;}
+
+dl, #posting {margin:1em;} dt {margin-bottom:.6em;} dd {margin-bottom:1em;}
+
+#faq dd {color:gray;}
+
+#posting li {display:block; margin-bottom:.8em;}
+
+.ahtung {color:tomato;}
+.ok {background:white; color:limegreen;}

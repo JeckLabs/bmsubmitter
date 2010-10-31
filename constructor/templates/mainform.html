@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Закладочник 2.0 &#151; конструктор модулей</title>
+	<link rel='stylesheet' href='./templates/css/reset.css' type='text/css' />
+	<link rel='stylesheet' href='./templates/css/forms.css' type='text/css' />
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+	<script type='text/javascript' src='./templates/js/jquery-1.3.2.min.js'></script> 
+	<script type='text/javascript'>
+		$(function () {
+			$('#loadLoginForm').click(function () {
+				$('#loginFormFields').load('./ajax.php', {action: 'getLoginForm', formUrl: $('#loginFormUrl').val()});
+				return false;
+			});
+			$('#loadAddForm').click(function () {
+				var loginData = $('select[name^=loginForm]').serialize();
+				$('#addFormFields').load('./ajax.php', {action: 'getAddForm', loginData: loginData, login: $('#login').val(), password: $('#password').val(), loginFormUrl: $('#loginFormUrl').val(), formUrl: $('#addFormUrl').val()});
+				return false;
+			});
+			$('.loading').hide();
+			$('.loading').ajaxStart(function () {
+				$(this).show();
+			});
+			$('.loading').ajaxStop(function () {
+				$(this).hide();
+			});
+		});
+	</script>
+</head>
+<body>
+<form action='./index.php' method='post'>
+	<fieldset>
+		<div class='form-row'>
+			<label for='moduleName' class='row-left'>Имя модуля</label>
+			<div class='row-center'>
+				<input id='moduleName' name='moduleName' type='text' class='full-width'/><br/>
+				<em>Например &#151; Бобр Добр</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='className' class='row-left'>Имя класса</label>
+			<div class='row-center'>
+				<input id='className' name='className' type='text' class='full-width'/><br/>
+				<em>
+				Название php класса модуля, должно состоять из букв латинского алфавита,
+				например &#151; BobrDobr
+				</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='registrationUrl' class='row-left'>Страница регистрации</label>
+			<div class='row-center'>
+				<input id='registrationUrl' name='registrationUrl' type='text' class='full-width'/><br/>
+				<em>Пример &#151; <a href='http://bobrdobr.ru/registration/'>http://bobrdobr.ru/registration/</a></em>
+			</div>
+			<hr/>
+		</div>
+		<div class='form-row'>
+			<label for='loginFormUrl' class='row-left'>Страница авторизации</label>
+			<div class='row-center'>
+				<input id='loginFormUrl' name='loginFormUrl' type='text' class='full-width'/><br/>
+				<em>На этой странице должна присутствовать форма для входа в систему. <a href='http://bobrdobr.ru/login/'>http://bobrdobr.ru/login/</a></em>
+			</div>
+			<div class='row-right'><button id='loadLoginForm'>Загрузить форму</button><img class="loading" src="./templates/loading.gif" alt="Loading..." /></div>
+		</div>
+		<div class='form-row'>
+			<label for='moduleName' class='row-left'>Поля формы для заполнения</label>
+			<div class='row-center'>
+				<div id='loginFormFields'></div>
+				<br/>
+				<em>Выберите поля для которых необходимо ввести логин и пароль</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='loginTestString' class='row-left'>Строка проверки</label>
+			<div class='row-center'>
+				<input id='loginTestString' name='loginTestString' type='text' class='full-width'/><br/>
+				<em>Текст который отсутствует на странице авторизации, но присутствует после логина.</em>
+			</div>
+			<hr/>
+		</div>
+		<div class='form-row'>
+			<label for='login' class='row-left'>Логин</label>
+			<div class='row-center'>
+				<input id='login' name='login' type='text' class='full-width'/><br/>
+				<em>Логин в сервисе, используется для отладки</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='password' class='row-left'>Пароль</label>
+			<div class='row-center'>
+				<input id='password' name='password' type='text' class='full-width'/>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='addFormUrl' class='row-left'>Страница добавления закладки</label>
+			<div class='row-center'>
+				<input id='addFormUrl' name='addFormUrl' type='text' class='full-width'/><br/>
+				<em>Страница с формой добавления закладки.</em>
+			</div>
+			<div class='row-right'><button id='loadAddForm'>Загрузить форму</button><img class="loading" src="./templates/loading.gif" alt="Loading..." /></div>
+		</div>
+		<div class='form-row'>
+			<label for='moduleName' class='row-left'>Поля формы для заполнения</label>
+			<div class='row-center'>
+				<div id='addFormFields'></div>
+				<br/>
+				<em>Выберите данные для полей формы.</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='tagsDelimiter' class='row-left'>Разделитель тегов</label>
+			<div class='row-center'>
+				<input id='tagsDelimiter' name='tagsDelimiter' type='text' value=', ' class='full-width'/><br/>
+				<em>Разделитель используемый для объединения тегов в одну строку</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='addTestString' class='row-left'>Строка проверки</label>
+			<div class='row-center'>
+				<input id='addTestString' name='addTestString' type='text' class='full-width'/><br/>
+				<em>Текст проверки для страницы добавления закладок.</em>
+			</div>
+		</div>
+		<div class='form-row'>
+			<label for='bookmarksUrl' class='row-left'>Формат ссылки на зкаладки</label>
+			<div class='row-center'>
+				<input id='bookmarksUrl' name='bookmarksUrl' type='text' class='full-width'/><br/>
+				<em>Вместо {login} будет вставлено имя пользователя. Привемер &#151; http://bobrdobr.ru/people/{login}/</em>
+			</div>
+			<hr/>
+		</div>
+		<button>Сгенерировать</button>
+	</fieldset>
+</form>
+</body>
+</html>

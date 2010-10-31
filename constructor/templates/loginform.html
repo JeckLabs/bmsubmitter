@@ -1,0 +1,15 @@
+<?foreach ($forms as $formNumber => $form):?>
+	<?foreach ($form['data'] as $key => $value):?>
+		<div class='field-title'><?=$key?></div>
+		<div class='field-value'>
+			<select name='loginForm[]'>
+				<option></option>
+				<option value='<?=$key?>:login'>Логин</option>
+				<option value='<?=$key?>:password'>Пароль</option>
+				<option value='<?=$key?>:check'>Проверить</option>
+				<option value='<?=$key?>:null'>Убрать</option>
+			</select>
+		</div>
+	<?endforeach?>
+	<hr/>
+<?endforeach?>
