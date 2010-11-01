@@ -9,7 +9,6 @@
 * в абсолютные.
 * 
 * @author Jeck (http://jeck.ru)
-* @version 1.1.3
 */
 class http {
 	public $user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.2.10) Gecko/20100914 Firefox/3.6.10 (.NET CLR 3.5.30729)';
@@ -23,6 +22,8 @@ class http {
 	public $proxy = '';
 	public $proxy_type = CURLPROXY_HTTP;
 	
+	public $current_url;
+	
 	// Режим следования по редиректу (true - включен, false - выключен)
 	public $follow_location = true;
 	
@@ -31,7 +32,7 @@ class http {
 	
 	public $info;
 	
-	public $ch;
+	private $ch;
 	private $result;
 	private $result_headers;
 	private $result_body;
@@ -66,6 +67,7 @@ class http {
 		Выполняет начальную инициализацию запроса 
 	*/
 	private function init($url) {
+		$this->current_url = $url;
 		$this->ch = curl_init($url);
 		
 		// Если запрос с использованием SSL - отключаем проверку сертификата
@@ -125,18 +127,38 @@ class http {
 		Обрабатывает заголовок set-cookie
 	*/
 	private function processSetCookie($string) {
-		if (($pos = strpos($string,";")) !== false) {
-			$string = substr($string,0,$pos);
+		$parts = explode(';', $string);
+		$domain = '.';
+		$cookies = array();
+		$expires = false;
+		foreach ($parts as $part) {
+			if (strpos($part, '=') !== false) {
+				list($key, $value) = explode('=', $part, 2);
+				$key = trim($key);
+				$value = trim($value);
+			} else {
+				$key = trim($part);
+				$value = '';
+			}
+			if (strtolower($key) == 'domain') {
+				$domain = $value;
+			}
+			if (strtolower($key) == 'expires') {
+				if ($time = strtotime($value)) {
+					$expires = (boolean) time() > $time;
+				}
+			}
+			if (!in_array(strtolower($key), array('domain', 'expires', 'path', 'secure', 'comment'))) {
+				$cookies[$key] = $value;
+			}
 		}
-		if (strpos($string,"=") !== false) {
-			list($key,$value) = explode("=",$string,2);
-			$key = urldecode(trim($key));
-			$value = urldecode(trim($value));
-		} else {
-			$key = urldecode(trim($string));;
-			$value = '';
+		foreach ($cookies as $key => $value) {
+			if ($expires) {
+				unset($this->cookies[$domain][$key]);
+			} else {
+				$this->cookies[$domain][$key] = $value;
+			}
 		}
-		$this->cookies[$key] = $value;
 	}
 	
 	/**
@@ -223,10 +245,18 @@ class http {
 	private function setCookies() {
 		if (is_array($this->cookies)) {
 			$cookie_string = '';
-			foreach ($this->cookies as $key => $value) {
-				$cookie_string .= urlencode($key).'='.urlencode($value).';';
+			$host = parse_url($this->current_url, PHP_URL_HOST);
+			foreach ($this->cookies as $domain => $cookies) {
+				if ($domain == '.' || preg_match('/'.preg_quote($domain, '/').'$/i',$host)) {
+					foreach ($cookies as $key => $value) {
+						$cookie_string .= $key.'='.$value.'; ';
+					}
+				}
 			}
-			curl_setopt($this->ch, CURLOPT_COOKIE, $cookie_string);
+			if (strlen($cookie_string) > 0) {
+				$cookie_string = substr($cookie_string, 0, -2);
+				curl_setopt($this->ch, CURLOPT_COOKIE, $cookie_string);
+			}
 		}
 	}
 	
