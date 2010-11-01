@@ -87,7 +87,7 @@
 			$('#modulesSelect').change();
 		});
 		$('#modulesSelect').change(function (){
-			modulesNames = eval($(this).val());
+			modulesNames = $(this).val().split(';');
 			profile = $('#profileSelect').val();
 			$('#modulesCheckboxes .moduleCheckbox').remove();
 			for (var key in modulesNames) {
@@ -199,7 +199,6 @@
 	<li><a href='./settings.php' title='<?=_e('Букмарклет, профили, наборы...')?>'><?=_e('Настройка')?></a></li>
 	<li><a href='./history.php' title='<?=_e('Уже добавленные закладки')?>'><?=_e('История')?></a></li>
 	<li><a href='./faq.php' title='<?=_e('Или FAQ')?>'><?=_e('ЧАВО')?></a></li>
-	<li><a href='http://ru.bmsubmitter.com/automate/' title='<?=_e('Если даже кнопку нажимать лень...')?>'  class='disabled'><?=_e('Автомат')?></a></li>
 </ul>
 
 <form id='bookmarkForm'>
@@ -248,7 +247,7 @@
 			<?=_e('Набор')?>
 			<select id='modulesSelect'>
 				<?foreach ($Groups->get() as $key => $groupName):?>
-					<option value='<?=json_encode($Groups->get($groupName))?>'><?=$groupName?></option>
+					<option value='<?=implode(';', $Groups->get($groupName))?>'><?=$groupName?></option>
 				<?endforeach?>
 			</select>
 		</label>
@@ -263,12 +262,6 @@
 		<?if ($lastVersion > VERSION):?>
 		<p class='red'>Ваша версия закладочника устарела, пожалуйста <a href='http://jeck.ru/download/'>обновитесь</a>.</p>
 		<?endif?>
-		<div id='feed'>
-			<?foreach ($rss as $item):?>
-				<h2><a href='<?=$item['link']?>'><?=$item['title']?></a></h2>
-				<p><?=$item['description']?></p>
-			<?endforeach?>
-		</div>
 	</div>
 </form>
 <?include './templates/footer.php'?>

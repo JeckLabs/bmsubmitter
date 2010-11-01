@@ -5,7 +5,6 @@
 	<li><a href='./settings.php' title='<?=_e('Букмарклет, профили, наборы...')?>'><?=_e('Настройка')?></a></li>
 	<li><a href='./history.php' title='<?=_e('Уже добавленные закладки')?>'><?=_e('История')?></a></li>
 	<li><?=_e('ЧАВО')?></li>
-	<li><a href='http://ru.bmsubmitter.com/automate/' title='<?=_e('Если даже кнопку нажимать лень...')?>'  class='disabled'><?=_e('Автомат')?></a></li>
 </ul>
 
 <div id='<?=_e('faq')?>'>

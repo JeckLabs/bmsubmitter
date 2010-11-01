@@ -29,8 +29,33 @@ if (!is_writable('./data')) {
 	$errors[] = _e('Нет доступа к папке "%s"', './data');
 }
 
-$groups = 'a:1:{s:16:"Основной";a:13:{i:0;s:8:"bobrdobr";i:1;s:9:"communizm";i:2;s:9:"delicious";i:3;s:14:"diggcollection";i:4;s:5:"klikz";i:5;s:10:"linkomatic";i:6;s:6:"memori";i:7;s:10:"misterwong";i:8;s:8:"moemesto";i:9;s:10:"ontrackday";i:10;s:11:"stozakladok";i:11;s:11:"zakladoknet";i:12;s:7:"znatoki";}}';
+$includePaths = array(
+	'./libs/core',
+	'./libs',
+	'./modules'
+);
+set_include_path(implode(PATH_SEPARATOR, $includePaths));
+
+function __autoload($name) {
+	$name = strtolower($name);
+	include $name.'.php';
+}
+
+$modules = array();
+foreach (glob('./modules/*.php') as $modulePath) {
+	$moduleClass = pathinfo($modulePath, PATHINFO_FILENAME);
+	$moduleClass = mb_strtolower($moduleClass);
+	$module = new $moduleClass;
+	if ($module instanceOf BMModule && $module->name) {
+		$modules[] = $moduleClass;
+	}
+}
+
+$Groups = new Groups('./data/groups.dat');
+$Groups->set('Основной', $modules);
+
 $profiles = 'a:1:{i:0;s:16:"Основной";}';
+
 $config = "<?php
 
 define('AC_KEY', '');
@@ -63,7 +88,6 @@ if (isset($_POST['password']) && count($errors) == 0) {
 	
 	file_put_contents('./data/config.php', $config);
 	file_put_contents('./data/install.lock', 'installed');
-	file_put_contents('./data/groups.dat', $groups);
 	file_put_contents('./data/profiles.dat', $profiles);
 	
 	header('location: ./');
