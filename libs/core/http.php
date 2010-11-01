@@ -1,11 +1,24 @@
 <?
-
+/**
+* HTTP Class
+* 
+* Позволяет легко выполнять GET и POST запросы, хранить 
+* и устанавливать cookies, следовать редиректам и 
+* возвращать данные в необходимой кодировке. Так же имеется 
+* встроенная функция для исправления относительных ссылок 
+* в абсолютные.
+* 
+* @author Jeck (http://jeck.ru)
+* @version 1.1.3
+*/
 class http {
-	public $user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5';
+	public $user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.2.10) Gecko/20100914 Firefox/3.6.10 (.NET CLR 3.5.30729)';
 	
 	public $cookies = array();
 	public $referer = '';
 	public $timeout = 10;
+	
+	public $externalIp;
 	
 	public $proxy = '';
 	public $proxy_type = CURLPROXY_HTTP;
@@ -18,47 +31,35 @@ class http {
 	
 	public $info;
 	
-	private $ch;
+	public $ch;
 	private $result;
 	private $result_headers;
 	private $result_body;
-	public $location = '';
+	private $location = '';
 	
-	public function GET($url,$encoding='UTF-8') {
+	public function GET($url, $encoding=null) {
 		$this->init($url);
 		$this->setDefaults();
 		$this->exec();
 		
 		if ($this->follow_location && !empty($this->location)) {
-			$result = $this->GET(self::fixURL($url,$this->location));
+			return $this->GET(self::fixURL($url,$this->location));
 		} else {
-			$result = $this->processEncoding($this->result_body,$encoding);
+			return $this->processEncoding($this->result_body,$encoding);
 		}
-		
-		$this->result = null;
-		$this->result_body = null;
-		$this->result_headers = null;
-		
-		return $result;
 	}
 	
-	public function POST($url,$postdata,$encoding='UTF-8') {
+	public function POST($url, $postdata, $encoding=null) {
 		$this->init($url);
 		$this->setPostFields($postdata);
 		$this->setDefaults();
 		$this->exec();
 		
 		if ($this->follow_location && !empty($this->location)) {
-			$result = $this->GET(self::fixURL($url,$this->location));
+			return $this->GET(self::fixURL($url, $this->location), $encoding);
 		} else {
-			$result = $this->processEncoding($this->result_body,$encoding);
+			return $this->processEncoding($this->result_body, $encoding);
 		}
-		
-		$this->result = null;
-		$this->result_body = null;
-		$this->result_headers = null;
-		
-		return $result;
 	}
 	
 	/**
@@ -180,7 +181,7 @@ class http {
 	*/
 	private function processEncoding($body,$encoding) {
 		if ($encoding !== null && !empty($this->encoding)) {
-			return iconv($this->encoding,$encoding.'//IGNORE',$body);
+			return iconv($this->encoding,$encoding.'//TRANSLIT',$body);
 		}
 		return $body;
 	}
@@ -195,6 +196,7 @@ class http {
 		$this->setCookies();
 		$this->setProxy();
 		$this->setTimeout();
+		$this->setExternalIp();
 	}
 	
 	/**
@@ -254,50 +256,73 @@ class http {
 			curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->timeout);
 		}
 	}
+	/**
+		Устанавливает внешний IP интерфейс
+	*/	
+	private function setExternalIp() {
+		if (!is_null($this->externalIp)) {
+			curl_setopt($this->ch, CURLOPT_INTERFACE, $this->externalIp);
+		}
+	}
 	
 	/**
-	 * Преобразовывает относительные URL в абсолютные по базе
-	 * TODO: Переписать наконец этот метод
+		Преобразовывает относительные URL в абсолютные по базе
 	*/
-	final static function fixURL($base,$link) {
-		if (!preg_match('~^(https?://[^/?#]+)?([^?#]*)?(\?[^#]*)?(#.*)?$~i', $link.'#', $matchesLink)) {
-			return false;
+	final static function fixUrl($baseUrl, $url) {
+		$baseParts = parse_url($baseUrl);
+		$urlParts = parse_url($url);
+		if (isset($urlParts['scheme'])) {
+			return self::buidUrl($urlParts);
 		}
-		if (!empty($matchesLink[1])) {
-			return $link;
-		}
-		if (!preg_match('~^(https?://)?([^/?#]+)(/[^?#]*)?(\?[^#]*)?(#.*)?$~i', $base.'#', $matchesBase)) {
-			return false;
-		}
-		if ($matchesLink[2] == './') {
-			return $base;
-		}
-		if (empty($matchesLink[2])) {
-			if (empty($matchesLink[3])) {
-				return 'http://'.$matchesBase[2].$matchesBase[3].$matchesBase[4];;
-			}
-			return 'http://'.$matchesBase[2].$matchesBase[3].$matchesLink[3];
-		}
-		$pathLink = explode('/', $matchesLink[2]);
-		if ($pathLink[0] == '') {
-			return 'http://'.$matchesBase[2].$matchesLink[2].$matchesLink[3];
-		}
-		$pathBase = explode('/', preg_replace('~^/~', '', $matchesBase[3]));
-		if (sizeOf($pathBase) > 0) {
-			array_pop($pathBase);
-		}
-		foreach ($pathLink as $p) {
-			if ($p == '.') {
-				continue;
-			} elseif ($p == '..') {
-				if (sizeOf($pathBase) > 0) {
-					array_pop($pathBase);
-				}
+		$parts = $baseParts;
+		unset($parts['fragment']);
+		if (isset($urlParts['path'])) {
+			unset($parts['query']);
+			if (strpos($urlParts['path'], '/') === 0) {
+				$parts['path'] = $urlParts['path'];
 			} else {
-				array_push($pathBase, $p);
+				$urlParts['path'] = './'.$urlParts['path'];
+				if (!isset($baseParts['path'])) {
+					$baseParts['path'] = '/';
+				}
+				$basePath = explode('/', dirname($baseParts['path']));
+				array_shift($basePath);
+				$urlPath = explode('/', $urlParts['path']);
+				$lastSegment = count($urlPath) - 1;
+				foreach ($urlPath as $key => $pathSegment) {
+					if ($pathSegment == '.') {
+						continue;
+					} else if ($pathSegment == '..') {
+						if (count($basePath) > 0) {
+							array_pop($basePath);
+						}
+					} else if (empty($pathSegment) && $key != $lastSegment) {
+						$basePath = array();
+					} else {
+						array_push($basePath, $pathSegment);
+					}
+				}
+				$parts['path'] = '/'.implode('/', $basePath);
 			}
 		}
-		return 'http://'.$matchesBase[2].'/'.implode('/', $pathBase).$matchesLink[3];
+		if (isset($urlParts['query'])) {
+			$parts['query'] = $urlParts['query'];
+		}
+		if (isset($urlParts['fragment'])) {
+			$parts['fragment'] = $urlParts['fragment'];
+		}
+		return self::buidUrl($parts);
+	}
+
+	final static function buidUrl($parts) {
+		$url  = (isset($parts['scheme']) ? $parts['scheme'].'://' : 'http://').
+				(isset($parts['user']) ? $parts['user'].(isset($parts['pass']) ? ':' . $parts['pass'] : '') .'@' : '').
+				(isset($parts['host']) ? $parts['host'] : '').
+				(isset($parts['port']) ? ':' . $parts['port'] : '').
+				(isset($parts['path']) ? $parts['path'] : '').
+				(isset($parts['query']) ? '?' . $parts['query'] : '').
+				(isset($parts['fragment']) ? '#' . $parts['fragment'] : '');
+		return $url;
 	}
 }
 

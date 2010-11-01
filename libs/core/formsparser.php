@@ -1,4 +1,7 @@
 <?php
+/*
+	version: 1.1.5
+*/
 class FormsParser {
 	public $action = "./";
 	public $method = "get";
@@ -37,8 +40,9 @@ class FormsParser {
 			3 => 'value'
 		)
 	);
+	
 	public static $params_rule = array(
-		'regexp' => '#(\w*)\s*=\s*["\']?([^<>\s"\']*)["\']?#isu',
+		'regexp' => '#(\w+)\s*=\s*["\']?([^<>\s"\']*)["\']?#isu',
 		'result' => array(
 			1 => 'key',
 			2 => 'value'
@@ -46,16 +50,18 @@ class FormsParser {
 	);
 	
 	
-	public function getForm($forms,$data) {
+	
+	
+	public function getForm($forms, $data) {
 		if (!is_array($forms)) {
 			$forms = $this->parseForms($forms);
 		}
 		if ($forms) {
 			foreach ($forms as $form) {
 				if ($data == array_intersect($data,array_keys($form['data']))) {
+					$this->action = $form['action'];
+					$this->method = $form['method'];
 					foreach ($form['data'] as $key => $value) {
-						$this->action = $form['action'];
-						$this->method = $form['method'];
 						
 						if (is_array($value)) {
 							if (count($value) > 1) {
@@ -72,9 +78,10 @@ class FormsParser {
 		return false;
 	}
 	
-	private function parseForm($body,$params) {
-		$data = array();
+	private function parseForm($body, $params) {
+
 		
+		$data = array();
 		$params = $this->parseParams($params);
 		$params = array_map('htmlspecialchars_decode', $params);
 		$data['action'] = (isset($params['action']) ? $params['action'] : './');
@@ -160,7 +167,8 @@ class FormsParser {
 	}
 	
 	public function parseForms($page) {
-		if ($forms = self::matchRule(self::$form_rule,$page)) {
+		$page = preg_replace('/<(style|script)[^>]*>.*?<\/\\1[^>]*>/is', ' ', $page);
+		if ($forms = self::matchRule(self::$form_rule, $page)) {
 			$count = count($forms['params']);
 			for ($i=0;$i<$count;$i++) {
 				$data[$i] = $this->parseForm($forms['body'][$i],$forms['params'][$i]);
