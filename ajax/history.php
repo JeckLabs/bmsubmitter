@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 chdir('../');
 require './init.php';
 
@@ -17,6 +19,6 @@ switch ($action) {
 		$data['tags'] = implode(', ', $data['tags']);
 	break;
 }
-
+ob_end_clean();
 echo json_encode($data);
 ?>

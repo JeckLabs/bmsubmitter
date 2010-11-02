@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 chdir('../');
 require './init.php';
 
@@ -65,6 +67,6 @@ switch ($action) {
 		$data = serialize($data);
 	break;
 }
-
+ob_end_clean();
 echo json_encode($data);
 ?>

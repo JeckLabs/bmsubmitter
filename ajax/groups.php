@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 chdir('../');
 require './init.php';
 
@@ -12,6 +14,7 @@ switch ($action) {
 	break;
 }
 
+ob_end_clean();
 echo json_encode($data);
 
 ?>

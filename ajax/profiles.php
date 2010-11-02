@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 chdir('../');
 require './init.php';
 
@@ -11,7 +13,7 @@ switch ($action) {
 		$data = $profile;
 	break;
 }
-
+ob_end_clean();
 echo json_encode($data);
 
 ?>
