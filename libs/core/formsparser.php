@@ -58,7 +58,7 @@ class FormsParser {
 		}
 		if ($forms) {
 			foreach ($forms as $form) {
-				if ($data == array_intersect($data,array_keys($form['data']))) {
+				if ($data == array_intersect($data, array_keys($form['data']))) {
 					$this->action = $form['action'];
 					$this->method = $form['method'];
 					foreach ($form['data'] as $key => $value) {
@@ -70,6 +70,7 @@ class FormsParser {
 								$form['data'][$key] = $value[0];
 							}
 						}
+						$form['data'][$key] = html_entity_decode($form['data'][$key], ENT_COMPAT, 'UTF-8');
 					}
 					return $form['data'];
 				}
@@ -106,8 +107,16 @@ class FormsParser {
 				$params = $this->parseParams($params);
 				if (isset($params['name'])) {
 					$name = $params['name'];
+					if (
+						isset($params['type']) 
+						&& $params['type'] == 'radio'
+						&& isset($data[$name]) 
+						&& !isset($params['checked'])
+					) {
+						continue;
+					}
 					$value = (isset($params['value']) ? $params['value'] : '');
-					$data = self::addValue($data,$name,$value);
+					$data = self::addValue($data, $name, $value);
 				}
 			}
 		}

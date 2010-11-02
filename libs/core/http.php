@@ -36,7 +36,7 @@ class http {
 	private $result;
 	private $result_headers;
 	private $result_body;
-	private $location = '';
+	public $location = '';
 	
 	public function get($url, $encoding=null) {
 		$this->init($url);
@@ -201,9 +201,9 @@ class http {
 	/**
 		Возвращает тело страницы в нужной кодировке
 	*/
-	private function processEncoding($body,$encoding) {
+	private function processEncoding($body, $encoding) {
 		if ($encoding !== null && !empty($this->encoding)) {
-			return iconv($this->encoding,$encoding.'//TRANSLIT',$body);
+			return @iconv($this->encoding, $encoding.'//TRANSLIT', $body);
 		}
 		return $body;
 	}
@@ -247,7 +247,8 @@ class http {
 			$cookie_string = '';
 			$host = parse_url($this->current_url, PHP_URL_HOST);
 			foreach ($this->cookies as $domain => $cookies) {
-				if ($domain == '.' || preg_match('/'.preg_quote($domain, '/').'$/i',$host)) {
+				$domain = preg_replace('/^\./', '', $domain);
+				if (empty($domain) || preg_match('/'.preg_quote($domain, '/').'$/i',$host)) {
 					foreach ($cookies as $key => $value) {
 						$cookie_string .= $key.'='.$value.'; ';
 					}
