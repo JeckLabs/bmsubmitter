@@ -14,7 +14,7 @@ class FormsParser {
 		)
 	);
 	public static $input_rule = array(
-		'regexp' => '#<input(\s)?(?(1)(.*))/?>#isuU',
+		'regexp' => '#<(?:input|button)(\s)?(?(1)(.*))/?>#isuU',
 		'result' => array(
 			2 => 'params'
 		)
@@ -50,7 +50,9 @@ class FormsParser {
 	);
 	
 	
-	
+	public function getForms($page) {
+		return $this->parseForms($page);
+	}
 	
 	public function getForm($forms, $data) {
 		if (!is_array($forms)) {

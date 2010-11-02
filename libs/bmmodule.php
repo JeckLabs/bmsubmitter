@@ -8,6 +8,8 @@ abstract class BMModule {
 	
 	protected $encoding;
 	
+	private $debug = false;
+	
 	public $bookmarkUrl;
 	public $cookies;
 	
@@ -15,6 +17,10 @@ abstract class BMModule {
 	
 	function __construct() {
 		$this->http = new http;
+	}
+	
+	public function setDebug($debug) {
+		$this->debug = $debug;
 	}
 	
 	public function login($data) {
@@ -62,6 +68,7 @@ abstract class BMModule {
 		} else {
 			$this->http->follow_location = true;
 		}
+		
 		
 		$this->buffer = $this->action($url, $postdata, $options);
 		
@@ -123,7 +130,19 @@ abstract class BMModule {
 			$postdata = $data;
 			$action = $url;
 		}
-		return $this->submit($action, $postdata, $method);
+		
+		$result = $this->submit($action, $postdata, $method);
+		if ($this->debug) {
+			echo '<pre style="font: 10pt monospace;text-align: left;">';
+			echo '<strong>'.strtoupper($method).'</strong> '.$action."\r\n";
+			echo '<strong>Postdata:</strong> '."\r\n";
+			print_r($postdata);
+			echo '</pre>';
+			echo '<div style="width: 100%;height: 300px;overflow: scroll;">';
+			echo $result;
+			echo '</div>';
+		}
+		return $result;
 	}
 	
 	private function submit($action, $data, $method='post') {
