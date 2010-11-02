@@ -257,6 +257,7 @@
 				<img src="./modules/icons/logo.png" />
 				<?=_e('Выбрать все')?>
 			</label>
+			<div class='clear'></div>
 		</div>
 		<div class='clear'></div>
 		<?if ($lastVersion > VERSION):?>

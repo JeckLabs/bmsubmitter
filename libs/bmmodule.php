@@ -13,10 +13,11 @@ abstract class BMModule {
 	public $bookmarkUrl;
 	public $cookies;
 	
-	private $buffer;
+	protected $buffer;
 	
 	function __construct() {
 		$this->http = new http;
+		$this->http->timeout = 60;
 	}
 	
 	public function setDebug($debug) {
@@ -76,7 +77,7 @@ abstract class BMModule {
 		$testSuccess = false;
 		switch ($testType) {
 			case 'string':
-				if (mb_strpos($this->buffer, $testCondition) || empty($testCondition)) {
+				if (empty($testCondition) || mb_strpos($this->buffer, $testCondition)) {
 					$testSuccess = true;
 				}
 			break;
@@ -91,7 +92,7 @@ abstract class BMModule {
 				}
 			break;
 			case 'redirect':
-				if (floor($this->http->info['http_code'] / 100) == 3) {
+				if (floor($this->http->info['http_code'] / 100) == 3 || !empty($this->http->location)) {
 					$testSuccess = true;
 				}
 			break;
@@ -103,7 +104,7 @@ abstract class BMModule {
 		return false;
 	}
 	
-	private function action($url, $data, $options) {
+	protected function action($url, $data, $options) {
 		extract($options);
 		if ($this->debug) {
 			echo '<pre style="font: 10pt monospace;text-align: left;">';
@@ -152,6 +153,7 @@ abstract class BMModule {
 			echo '<strong>'.strtoupper($method).'</strong> '.$action."\r\n";
 			echo '<strong>Postdata:</strong> '."\r\n";
 			print_r($postdata);
+			echo '<strong>Current URL:</strong> '.$this->http->current_url."\r\n";
 			echo '</pre>';
 			echo '<div style="width: 100%;height: 600px;overflow: scroll;border: 3px #666 dashed;">';
 			echo $result;
@@ -160,7 +162,7 @@ abstract class BMModule {
 		return $result;
 	}
 	
-	private function submit($action, $data, $method='post') {
+	protected function submit($action, $data, $method='post') {
 	
 		$method = strtolower($method);
 		if (isset($this->encoding)) {
