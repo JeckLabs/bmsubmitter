@@ -44,9 +44,9 @@ class http {
 		$this->exec();
 		
 		if ($this->follow_location && !empty($this->location)) {
-			return $this->GET(self::fixURL($url,$this->location));
+			return $this->GET(self::fixURL($url,$this->location), $encoding);
 		} else {
-			return $this->processEncoding($this->result_body,$encoding);
+			return $this->processEncoding($this->result_body, $encoding);
 		}
 	}
 	

@@ -72,14 +72,12 @@ abstract class BMModule {
 		
 		$this->buffer = $this->action($url, $postdata, $options);
 		
-		// TODO: ¬˚‰ÂÎËÚ¸ ˝ÚÓÚ ÍÓ‰ ‚ ÓÚ‰ÂÎ¸Ì˚È ÏÂÚÓ‰
+		// TODO: –í—ã–¥–µ–ª–∏—Ç—å —ç—Ç–æ—Ç –∫–æ–¥ –≤ –æ—Ç–¥–µ–ª—å–Ω—ã–π –º–µ—Ç–æ–¥
 		$testSuccess = false;
 		switch ($testType) {
 			case 'string':
 				if (mb_strpos($this->buffer, $testCondition) || empty($testCondition)) {
 					$testSuccess = true;
-				} else {
-					//var_dump($this->buffer);
 				}
 			break;
 			case 'regexp':
@@ -107,6 +105,14 @@ abstract class BMModule {
 	
 	private function action($url, $data, $options) {
 		extract($options);
+		if ($this->debug) {
+			echo '<pre style="font: 10pt monospace;text-align: left;">';
+			echo '<strong>URL:</strong> '.$url."\r\n";
+			echo '<strong>Data:</strong> '."\r\n";
+			print_r($data);
+			echo '<strong>Options:</strong> '."\r\n";
+			print_r($options);
+		}
 		if (!$dontParse) {
 			if (!$fromBuffer) {
 				$page = $this->getPage($url);
@@ -116,6 +122,15 @@ abstract class BMModule {
 			$fp = new FormsParser();
 			$postdata = $fp->getForm($page, array_keys($data));
 			if (!$postdata) {
+				if ($this->debug) {
+					echo "–ù–µ–≤–æ–∑–º–æ–∂–Ω–æ –Ω–∞–π—Ç–∏ —Ñ–æ—Ä–º—É\r\n";
+					echo '<strong>Forms:</strong> '."\r\n";
+					print_r($fp->getForms($page));
+					echo '</pre>';
+					echo '<div style="width: 100%;height: 600px;overflow: scroll;border: 3px #666 dashed;">';
+					echo $page;
+					echo '</div>';
+				}
 				return false;
 			}
 			foreach ($postdata as $key => $value) {
@@ -133,12 +148,11 @@ abstract class BMModule {
 		
 		$result = $this->submit($action, $postdata, $method);
 		if ($this->debug) {
-			echo '<pre style="font: 10pt monospace;text-align: left;">';
 			echo '<strong>'.strtoupper($method).'</strong> '.$action."\r\n";
 			echo '<strong>Postdata:</strong> '."\r\n";
 			print_r($postdata);
 			echo '</pre>';
-			echo '<div style="width: 100%;height: 300px;overflow: scroll;">';
+			echo '<div style="width: 100%;height: 600px;overflow: scroll;border: 3px #666 dashed;">';
 			echo $result;
 			echo '</div>';
 		}
@@ -155,7 +169,7 @@ abstract class BMModule {
 		}
 		switch ($method) {
 			case 'post':
-				$page = $this->http->POST($action, $data);
+				$page = $this->http->post($action, $data, 'UTF-8');
 				return $page;
 			break;
 			case 'get':
@@ -163,14 +177,14 @@ abstract class BMModule {
 				$action = preg_replace('/\?.*$/i', '', $action);
 				$query = http_build_query($data);
 				$action .= '?'.$query;
-				return $this->http->GET($action);
+				return $this->http->get($action, 'UTF-8');
 			break;
 		}
 	}
 	
 	private function getPage($url) {
-		// TODO: –Â‡ÎËÁÓ‚‡Ú¸ ÍÂ¯ËÓ‚‡ÌËÂ ‰‡ÌÌ˚ı
-		return $this->http->GET($url);
+		// TODO: –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å –∫–µ—à–∏—Ä–æ–≤–∞–Ω–∏–µ –¥–∞–Ω–Ω—ã—Ö
+		return $this->http->get($url, 'UTF-8');
 	}
 	
 	protected function convert($data, $encoding) {
