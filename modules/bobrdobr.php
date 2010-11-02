@@ -26,8 +26,7 @@ class BobrDobr extends BMModule {
 			'tags' => implode(', ', $tags)
 		);
 		$options = array(
-			'testCondition' => 'bookmarks-list',
-			'cache' => false
+			'testType' => 'redirect'
 		);
 		$this->bookmarkUrl = 'http://bobrdobr.ru/people/'.urlencode($this->login).'/';
 		return $this->process('http://bobrdobr.ru/add/', $postdata, $options);

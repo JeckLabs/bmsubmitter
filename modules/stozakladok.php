@@ -10,8 +10,7 @@ class Stozakladok extends BMModule {
 			'lp' => $this->password
 		);
 		$options = array(
-			'testType' => 'cookies',
-			'testCondition' => 'mem',
+			'testCondition' => '100zakladok.ru - переход',
 			'encoding' => 'WINDOWS-1251',
 		);
 		return $this->process('http://www.100zakladok.ru/login/', $postdata, $options);

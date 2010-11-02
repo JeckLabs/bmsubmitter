@@ -7,11 +7,10 @@ class MoeMesto extends BMModule {
 	protected function _login(Array $data) {
 		$postdata = array(
 			'login' => $this->login,
-			'password' => $this->password,
-			'bind_ip' => false
+			'password' => $this->password
 		);
 		$options = array(
-			'testCondition' => 'вы вошли как',
+			'testCondition' => 'enter_as',
 		);
 		return $this->process('http://moemesto.ru/login/', $postdata, $options);
 	}

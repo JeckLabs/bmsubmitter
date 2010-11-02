@@ -10,7 +10,7 @@ class Zakladoknet extends BMModule {
 			'passwd' => $this->password
 		);
 		$options = array(
-			'testCondition' => 'моя анкета',
+			'testCondition' => 'anketa.php',
 		);
 		return $this->process('http://zakladok.net/', $postdata, $options);
 	}
