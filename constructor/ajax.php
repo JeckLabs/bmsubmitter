@@ -2,12 +2,6 @@
 
 include './init.php';
 
-function __autoload($name) {
-	$name = strtolower($name);
-	if (file_exists('./libs/'.$name.'.php')) {
-		require './libs/'.$name.'.php';
-	}
-} 
 
 if (isset($_POST['action'])) {
 	$http = new http;
@@ -19,6 +13,9 @@ if (isset($_POST['action'])) {
 	} 
 	if ($_POST['action'] == 'getAddForm') {
 		parse_str($_POST['loginData'], $loginData);
+		if (!isset($loginData['loginForm'])) {
+			exit;
+		}
 		$postfields = parseFields(
 			$loginData['loginForm'],
 			array(
@@ -26,8 +23,11 @@ if (isset($_POST['action'])) {
 				'password' => $_POST['password']
 			)
 		);
+		$data = array(
+			'testCondition' => $_POST['loginTestString']
+		);
 		$cm = new CModule;
-		$http->cookies = $cm->getLoginCookies($_POST['loginFormUrl'], $postfields);
+		$http->cookies = $cm->getLoginCookies($_POST['loginFormUrl'], $postfields, $data);
 		$page = $http->GET($_POST['formUrl'], 'UTF-8');
 		$forms = $fp->getForms($page);
 		include './templates/addform.html';

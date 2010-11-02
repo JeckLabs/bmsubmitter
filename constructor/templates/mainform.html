@@ -5,7 +5,7 @@
 	<link rel='stylesheet' href='./templates/css/reset.css' type='text/css' />
 	<link rel='stylesheet' href='./templates/css/forms.css' type='text/css' />
 	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-	<script type='text/javascript' src='./templates/js/jquery-1.3.2.min.js'></script> 
+	<script type='text/javascript' src='./templates/js/jquery-1.4.3.min.js'></script> 
 	<script type='text/javascript'>
 		$(function () {
 			$('#loadLoginForm').click(function () {
@@ -14,7 +14,7 @@
 			});
 			$('#loadAddForm').click(function () {
 				var loginData = $('select[name^=loginForm]').serialize();
-				$('#addFormFields').load('./ajax.php', {action: 'getAddForm', loginData: loginData, login: $('#login').val(), password: $('#password').val(), loginFormUrl: $('#loginFormUrl').val(), formUrl: $('#addFormUrl').val()});
+				$('#addFormFields').load('./ajax.php', {action: 'getAddForm', loginData: loginData, login: $('#login').val(), password: $('#password').val(), loginFormUrl: $('#loginFormUrl').val(), formUrl: $('#addFormUrl').val(), loginTestString: $('#loginTestString').val()});
 				return false;
 			});
 			$('.loading').hide();
