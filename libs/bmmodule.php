@@ -91,7 +91,7 @@ abstract class BMModule {
 				}
 			break;
 			case 'redirect':
-				if (!empty($this->http->location)) {
+				if (floor($this->http->info['http_code'] / 100) == 3) {
 					$testSuccess = true;
 				}
 			break;
@@ -133,8 +133,9 @@ abstract class BMModule {
 				}
 				return false;
 			}
-			foreach ($postdata as $key => $value) {
+			foreach ($data as $key => $value) {
 				if ($value === false) {
+					unset($data[$key]);
 					unset($postdata[$key]);
 				}
 			}

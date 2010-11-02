@@ -1,10 +1,8 @@
 <?php
-/*
-	version: 1.1.5
-*/
+
 class FormsParser {
-	public $action = "./";
-	public $method = "get";
+	public $action = '';
+	public $method = 'get';
 	
 	public static $form_rule = array(
 		'regexp' => '#<form(\s)?(?(1)(.*))>(.*)</form>#isuU',
@@ -86,7 +84,7 @@ class FormsParser {
 		$data = array();
 		$params = $this->parseParams($params);
 		$params = array_map('htmlspecialchars_decode', $params);
-		$data['action'] = (isset($params['action']) ? $params['action'] : './');
+		$data['action'] = (isset($params['action']) ? $params['action'] : '');
 		$data['method'] = (isset($params['method']) ? strtolower($params['method']) : 'get');
 		
 		if (isset($parmas['name'])) {

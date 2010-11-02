@@ -38,26 +38,26 @@ class http {
 	private $result_body;
 	private $location = '';
 	
-	public function GET($url, $encoding=null) {
+	public function get($url, $encoding=null) {
 		$this->init($url);
 		$this->setDefaults();
 		$this->exec();
 		
 		if ($this->follow_location && !empty($this->location)) {
-			return $this->GET(self::fixURL($url,$this->location), $encoding);
+			return $this->get(self::fixUrl($url,$this->location), $encoding);
 		} else {
 			return $this->processEncoding($this->result_body, $encoding);
 		}
 	}
 	
-	public function POST($url, $postdata, $encoding=null) {
+	public function post($url, $postdata, $encoding=null) {
 		$this->init($url);
 		$this->setPostFields($postdata);
 		$this->setDefaults();
 		$this->exec();
 		
 		if ($this->follow_location && !empty($this->location)) {
-			return $this->GET(self::fixURL($url, $this->location), $encoding);
+			return $this->get(self::fixUrl($url, $this->location), $encoding);
 		} else {
 			return $this->processEncoding($this->result_body, $encoding);
 		}
@@ -300,23 +300,25 @@ class http {
 	*/
 	final static function fixUrl($baseUrl, $url) {
 		$baseParts = parse_url($baseUrl);
+		if (preg_match('/^\/\//', $url)) {
+			$url = $baseParts['scheme'].':'.$url;
+		}
 		$urlParts = parse_url($url);
 		if (isset($urlParts['scheme'])) {
 			return self::buidUrl($urlParts);
 		}
 		$parts = $baseParts;
+		if (!isset($baseParts['path'])) {
+			$baseParts['path'] = '';
+		}
 		unset($parts['fragment']);
 		if (isset($urlParts['path'])) {
 			unset($parts['query']);
 			if (strpos($urlParts['path'], '/') === 0) {
 				$parts['path'] = $urlParts['path'];
-			} else {
-				$urlParts['path'] = './'.$urlParts['path'];
-				if (!isset($baseParts['path'])) {
-					$baseParts['path'] = '/';
-				}
-				$basePath = explode('/', dirname($baseParts['path']));
-				array_shift($basePath);
+			} else if (isset($urlParts['path']) && !empty($urlParts['path'])) {
+				$basePath = explode('/', $baseParts['path']);
+				array_pop($basePath);
 				$urlPath = explode('/', $urlParts['path']);
 				$lastSegment = count($urlPath) - 1;
 				foreach ($urlPath as $key => $pathSegment) {
@@ -332,7 +334,11 @@ class http {
 						array_push($basePath, $pathSegment);
 					}
 				}
-				$parts['path'] = '/'.implode('/', $basePath);
+				$basePath = implode('/', $basePath);
+				if (strpos($basePath, '/') !== 0) {
+					$basePath = '/'.$basePath;
+				}
+				$parts['path'] = $basePath;
 			}
 		}
 		if (isset($urlParts['query'])) {
@@ -349,7 +355,7 @@ class http {
 				(isset($parts['user']) ? $parts['user'].(isset($parts['pass']) ? ':' . $parts['pass'] : '') .'@' : '').
 				(isset($parts['host']) ? $parts['host'] : '').
 				(isset($parts['port']) ? ':' . $parts['port'] : '').
-				(isset($parts['path']) ? $parts['path'] : '').
+				(isset($parts['path']) ? $parts['path'] : '/').
 				(isset($parts['query']) ? '?' . $parts['query'] : '').
 				(isset($parts['fragment']) ? '#' . $parts['fragment'] : '');
 		return $url;
