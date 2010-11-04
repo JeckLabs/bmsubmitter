@@ -1,7 +1,7 @@
 <?php
 @error_reporting(0);
 @set_time_limit(0);
-define('VERSION', '2.05');
+define('VERSION', '2.1');
 
 if (!file_exists('./data/install.lock')) {
 	header('Location: ./install.php');

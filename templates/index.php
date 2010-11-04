@@ -195,7 +195,7 @@
 </script>
 
 <ul id='header'>
-	<li id='logo'><?=_e('Закладочник 2.0')?> </li>
+	<li id='logo'><?=_e('Закладочник')?> <?=VERSION?></li>
 	<li><a href='./settings.php' title='<?=_e('Букмарклет, профили, наборы...')?>'><?=_e('Настройка')?></a></li>
 	<li><a href='./history.php' title='<?=_e('Уже добавленные закладки')?>'><?=_e('История')?></a></li>
 	<li><a href='./faq.php' title='<?=_e('Или FAQ')?>'><?=_e('ЧАВО')?></a></li>
@@ -204,7 +204,7 @@
 <form id='bookmarkForm'>
 	<fieldset id='mainForm'>
 		<div class='formRow'>
-			<label for='bookmarkUrl'><a href='#' id='loadLastButton' title='<?=_e('Заполнить прошлым')?>'>&larr;</a> <?=_e('Ссылка')?></label>
+			<label for='bookmarkUrl'><a href='#' id='loadLastButton' title='<?=_e('Заполнить прошлым')?>'><big>&larr;</big></a> <?=_e('Ссылка')?></label>
 			<input id='bookmarkUrl' name='bookmarkUrl' type='text' value='<?=(isset($data['url']) ? $data['url'] : '')?>'/>
 		</div>
 		<div class='formRow'>
@@ -216,7 +216,7 @@
 			<textarea id='bookmarkDescription' name='bookmarkDescription' cols='39' rows='5'><?=(isset($data['description']) ? $data['description'] : '')?></textarea>
 		</div>
 		<div class='formRow'>
-			<label class='lat' title='<?=_e('Через запятую')?>'><?=_e('Метки')?></label>
+			<label class='lat'><?=_e('Метки')?> (<?=_e('Через запятую')?>)</label>
 			<input id='bookmarkTags' type='text' name='bookmarkTags' value=''/>
 		</div>
 		<label>
@@ -227,7 +227,7 @@
 			<input id='oneThread' type='checkbox' />
 			<?=_e('последовательно')?>
 		</label>
-		<span id='loading'><?=_e('Загрузка...')?></span>
+		<span id='loading'><img src='./templates/loading.gif' height='16' width='16' alt='<?=_e('Загрузка...')?>' /></span>
 		<button id='submitButton'><?=_e('Пуск')?></button>
 		<div class='clear'></div>
 		<div id='results'>
@@ -235,13 +235,14 @@
 	</fieldset>
 
 	<div id='aside'>
-		<label title='<?=_e('Выбор профиля (набора аккаунтов)')?>' class='nobr'>
+		<label title='<?=_e('Выбор профиля (набора аккаунтов)')?>' class='nobr'> 
 			<?=_e('Профиль')?>
 			<select id='profileSelect'>
 				<?foreach ($Profiles->get() as $profile):?>
 					<option value='<?=$profile?>'><?=$Profiles->get($profile)?></option>
 				<?endforeach?>
 			</select>
+			<big title='<?=_e('Используется для отправки закладок с помощью определенного набора аккаунтов, свой набор можно создать в настройках.')?>'>?</big>
 		</label>
 		<label title='<?=_e('Выбор набора')?>' class='nobr'>
 			<?=_e('Набор')?>
@@ -250,11 +251,11 @@
 					<option value='<?=implode(';', $Groups->get($groupName))?>'><?=$groupName?></option>
 				<?endforeach?>
 			</select>
+			<big title='<?=_e('Используется для групировки модулей, свой набор можно создать в настройках.')?>'>?</big>
 		</label>
 		<div id='modulesCheckboxes'>
 			<label for="checkAll"> 
 				<input id="checkAll" type="checkbox" />
-				<img src="./modules/icons/logo.png" />
 				<?=_e('Выбрать все')?>
 			</label>
 			<div class='clear'></div>
