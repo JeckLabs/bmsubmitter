@@ -17,6 +17,7 @@ a img {border:none;}
 .red {color: red}
 #feed, #results {margin-top: 50px;}
 
+
 ul {padding:0;}
 
 #header {font-size:large; margin-bottom:1.8em;}
@@ -104,3 +105,26 @@ dl, #posting {margin:1em;} dt {margin-bottom:.6em;} dd {margin-bottom:1em;}
 
 .ahtung {color:tomato;}
 .ok {background:white; color:limegreen;}
+
+#feed h2{
+	margin-bottom: 0;
+}
+#feed em{
+	font-size: small;
+}
+#feed p{
+	font-size: 12pt;
+	line-height: 1.3;
+	margin-top: 0.3em;
+	margin-bottom: 0.5em;
+}
+
+#feed ul {
+	list-style: circle outside !important;
+}
+#feed ul li{
+	list-style: circle outside !important;
+	display: block;
+	margin-left: 25px;
+	padding-left: 10px;
+}

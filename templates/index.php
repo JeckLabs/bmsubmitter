@@ -264,6 +264,13 @@
 		<?if ($lastVersion > VERSION):?>
 		<p class='red'>Ваша версия закладочника устарела, пожалуйста <a href='http://jeck.ru/download/'>обновитесь</a>.</p>
 		<?endif?>
+		<div id='feed'>
+			<?foreach ($rss as $item):?>
+				<h2><?=$item['title']?></h2>
+				<em class='date'><?=$item['date']?></em> 
+				<p><?=$item['description']?></p>
+			<?endforeach?>
+		</div>
 	</div>
 </form>
 <?include './templates/footer.php'?>

@@ -6,7 +6,6 @@
 	<link href='./templates/style.css' rel='stylesheet' type='text/css' /> 
 	<link rel='icon' href='templates/favicon.ico' type='image/x-icon' />
 	<link rel='shortcut icon' href='templates/favicon.ico' type='image/x-icon' />
-	<link href='./templates/style.css' rel='stylesheet' type='text/css' /> 
 	<script type="text/javascript" src="./js/jquery-1.4.3.min.js"></script> 
 	<script type="text/javascript" src="./js/jquery.validate.pack.js"></script>
 	<script type="text/javascript" src="./js/global.js"></script>
