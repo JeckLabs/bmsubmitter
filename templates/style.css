@@ -1,5 +1,7 @@
 html {background: whitesmoke; font:medium/1.4em Verdana, serif;}
 
+body {min-width: 1000px;}
+
 a {color:dodgerblue;}
 a:hover {color:mediumblue;}
 #loadLastButton {text-decoration:none;}
@@ -69,8 +71,9 @@ label.error {
 
 div {margin-top:1em;}
 div label {float:left; margin-right:1em; width:40%; min-width:8em;}
+
 .nobr, #aside label {white-space:nowrap;}
-select {min-width:12em;}
+select {min-width:8em;max-width: 12em;}
 
 
 #setting #header {margin-bottom:4em;}
