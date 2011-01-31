@@ -51,16 +51,20 @@ switch ($action) {
 		} catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['login'] = $passwordData['login'];
-			switch ($e->getMessage()) {
+            $msg = $e->getMessage();
+			switch ($msg) {
 				case 'CANT_LOGIN':
-					$data['msg'] = _e('Ошибка авторизации');
+					$data['msg'] = _e('РћС€РёР±РєР° Р°РІС‚РѕСЂРёР·Р°С†РёРё');
 				break;
 				case 'CANT_ADD_BOOKMARK':
-					$data['msg'] = _e('Невозможно добавить закладку');
+					$data['msg'] = _e('РќРµРІРѕР·РјРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ Р·Р°РєР»Р°РґРєСѓ');
 				break;
 				case 'MODULE_NOT_COMPATIBLE':
-					$data['msg'] = _e('Модуль не совместим');
+					$data['msg'] = _e('РњРѕРґСѓР»СЊ РЅРµ СЃРѕРІРјРµСЃС‚РёРј');
 				break;
+                default:
+                    $data['msg'] = $msg;
+                break;
 			}
 		}
 	break;
