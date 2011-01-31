@@ -9,11 +9,12 @@ class TooDoo extends BMModule {
         $postdata = array (
             "email" => $this->login,
             "password" => $this->password,
+            "remember_me" => true,
         ); 
         $options = array( 
             "testCondition" => "/settings" 
         ); 
-        return $this->process("http://toodoo.ru/account/signup", $postdata, $options); 
+        return $this->process("http://toodoo.ru/", $postdata, $options); 
     } 
      
     protected function _addBookmark(Array $data) { 
