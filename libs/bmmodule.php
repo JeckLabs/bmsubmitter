@@ -153,6 +153,8 @@ abstract class BMModule {
 			echo '<strong>'.strtoupper($method).'</strong> '.$action."\r\n";
 			echo '<strong>Postdata:</strong> '."\r\n";
 			print_r($postdata);
+			echo '<strong>Cookies:</strong> '."\r\n";
+			print_r($this->http->cookies);
 			echo '<strong>Current URL:</strong> '.$this->http->current_url."\r\n";
 			echo '</pre>';
 			echo '<div style="width: 100%;height: 600px;overflow: scroll;border: 3px #666 dashed;">';
