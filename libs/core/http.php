@@ -27,6 +27,9 @@ class http {
 	// Режим следования по редиректу (true - включен, false - выключен)
 	public $follow_location = true;
 	
+	// Кодировка по умолчанию
+	public $default_encoding = 'WINDOWS-1251';
+	
 	// Кодировка страницы 
 	public $encoding = '';
 	
@@ -36,7 +39,7 @@ class http {
 	private $result;
 	private $result_headers;
 	private $result_body;
-	public $location = '';
+	private $location = '';
 	
 	public function get($url, $encoding=null) {
 		$this->init($url);
@@ -61,6 +64,13 @@ class http {
 		} else {
 			return $this->processEncoding($this->result_body, $encoding);
 		}
+	}
+	
+	/**
+		Возвращает заголовки последнего запроса
+	*/
+	public function getHeaders() {
+		return $this->result_headers;
 	}
 	
 	/**
@@ -93,6 +103,7 @@ class http {
 		
 		$this->processHeaders();
 		$this->processBody();
+		$this->correctEncoding();
 	}
 	
 	/**
@@ -192,7 +203,7 @@ class http {
 		$this->result_body = substr($this->result,$this->info['header_size']);
 		// Определяем кодировку по meta тегам
 		if (is_null($this->encoding)) {
-			if (preg_match("#<meta\b[^<>]*?\bcontent=\"text/html;\s*charset=(.*?)\"#is",$this->result_body,$match)) {
+			if (preg_match("#<meta\b[^<>]*?\bcontent=['\"]?text/html;\s*charset=([^>\s\"']+)['\"]?#is", $this->result_body, $match)) {
 				$this->encoding = strtoupper($match[1]);
 			}
 		}
@@ -201,9 +212,9 @@ class http {
 	/**
 		Возвращает тело страницы в нужной кодировке
 	*/
-	private function processEncoding($body, $encoding) {
+	private function processEncoding($body,$encoding) {
 		if ($encoding !== null && !empty($this->encoding)) {
-			return @iconv($this->encoding, $encoding.'//TRANSLIT', $body);
+			return iconv($this->encoding, $encoding.'//TRANSLIT', $body);
 		}
 		return $body;
 	}
@@ -247,8 +258,7 @@ class http {
 			$cookie_string = '';
 			$host = parse_url($this->current_url, PHP_URL_HOST);
 			foreach ($this->cookies as $domain => $cookies) {
-				$domain = preg_replace('/^\./', '', $domain);
-				if (empty($domain) || preg_match('/'.preg_quote($domain, '/').'$/i',$host)) {
+				if ($domain == '.' || preg_match('/'.preg_quote($domain, '/').'$/i',$host)) {
 					foreach ($cookies as $key => $value) {
 						$cookie_string .= $key.'='.$value.'; ';
 					}
@@ -266,7 +276,7 @@ class http {
 	*/	
 	private function setPostFields($postdata) {
 		curl_setopt($this->ch, CURLOPT_POST, true);
-		curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
+		curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($postdata, '', '&'));
 	}
 	
 	/**
@@ -293,6 +303,20 @@ class http {
 	private function setExternalIp() {
 		if (!is_null($this->externalIp)) {
 			curl_setopt($this->ch, CURLOPT_INTERFACE, $this->externalIp);
+		}
+	}
+	
+	/**
+		Корректирует кодировку если она задана в виде не подходящим для curl
+	*/
+	private function correctEncoding() {
+		if (!is_null($this->encoding)) {
+			if (preg_match('/\d{4}$/i', $this->encoding, $match)) {
+				$this->encoding = 'WINDOWS-'.$match[0];
+			}
+			$this->encoding = strtoupper($this->encoding);
+		} else {
+			$this->encoding = $this->default_encoding;
 		}
 	}
 	
