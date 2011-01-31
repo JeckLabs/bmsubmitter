@@ -138,9 +138,10 @@ abstract class BMModule {
 				if ($value === false) {
 					unset($data[$key]);
 					unset($postdata[$key]);
-				}
+				} else if ($value !== true) {
+                    $postdata[$key] = $data[$key];
+                }
 			}
-			$postdata = array_merge($postdata, $data);
 			$action = http::fixURL($url, $fp->action);
 			$method = $fp->method;
 		} else {
