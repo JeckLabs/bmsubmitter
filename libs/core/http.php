@@ -256,9 +256,12 @@ class http {
 	private function setCookies() {
 		if (is_array($this->cookies)) {
 			$cookie_string = '';
-			$host = parse_url($this->current_url, PHP_URL_HOST);
-			foreach ($this->cookies as $domain => $cookies) {
-				if ($domain == '.' || preg_match('/'.preg_quote($domain, '/').'$/i',$host)) {
+			$currentHost = parse_url($this->current_url, PHP_URL_HOST);
+			foreach ($this->cookies as $cookieDomain => $cookies) {
+                if ($currentHost{0} !== '.') {
+                    $currentHost = '.'.$currentHost;
+                }
+				if ($cookieDomain == '.' || preg_match('/'.preg_quote($cookieDomain, '/').'$/i', $currentHost)) {
 					foreach ($cookies as $key => $value) {
 						$cookie_string .= $key.'='.$value.'; ';
 					}
